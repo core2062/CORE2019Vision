@@ -14,13 +14,14 @@ install: build
 clean:
 	rm ${EXE} *.o
 
-OBJS=main.o GripPipeline.o
+OBJS=GripPipeline.o main.o 
 
-${EXE}: ${OBJS}
-	${CXX} -pthread -g -o $@ $^ ${DEPS_LIBS} -Wl,--unresolved-symbols=ignore-in-shared-libs
+GripPipeline.o: GripPipeline.cpp
+	${CXX} -pthread -g -Og -c -o GripPipeline.o ${CXXFLAGS} ${DEPS_CFLAGS} GripPipeline.cpp
 
 main.o: GripPipeline.h main.cpp
 	${CXX} -pthread -g -Og -c -o main.o ${CXXFLAGS} ${DEPS_CFLAGS} main.cpp
 
-GripPipeline.o: GripPipeline.cpp
-	${CXX} -pthread -g -Og -c -o GripPipeline.o ${CXXFLAGS} ${DEPS_CFLAGS} GripPipeline.cpp
+${EXE}: ${OBJS}
+	${CXX} -pthread -g -o $@ $^ ${DEPS_LIBS} -Wl,--unresolved-symbols=ignore-in-shared-libs
+

@@ -26,15 +26,19 @@ void GripPipeline::Process(cv::Mat& source0){
 	double filterContoursMinArea = 10.0;  // default Double
 	double filterContoursMinPerimeter = 100.0;  // default Double
 	double filterContoursMinWidth = 10.0;  // default Double
-	double filterContoursMaxWidth = 1000;  // default Double
+	double filterContoursMaxWidth = 1000.0;  // default Double
 	double filterContoursMinHeight = 5.0;  // default Double
-	double filterContoursMaxHeight = 1000;  // default Double
+	double filterContoursMaxHeight = 1000.0;  // default Double
 	double filterContoursSolidity[] = {0.0, 100.0};
-	double filterContoursMaxVertices = 1000000;  // default Double
-	double filterContoursMinVertices = 0;  // default Double
-	double filterContoursMinRatio = 0;  // default Double
+	double filterContoursMaxVertices = 1000000.0;  // default Double
+	double filterContoursMinVertices = 0.0;  // default Double
+	double filterContoursMinRatio = 0.0;  // default Double
 	double filterContoursMaxRatio = 1000.0;  // default Double
 	filterContours(filterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, filterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, this->filterContoursOutput);
+	//Step Convex_Hulls0:
+	//input
+	std::vector<std::vector<cv::Point> > convexHullsContours = filterContoursOutput;
+	convexHulls(convexHullsContours, this->convexHullsOutput);
 }
 
 /**
@@ -57,6 +61,13 @@ std::vector<std::vector<cv::Point> >* GripPipeline::GetFindContoursOutput(){
  */
 std::vector<std::vector<cv::Point> >* GripPipeline::GetFilterContoursOutput(){
 	return &(this->filterContoursOutput);
+}
+/**
+ * This method is a generated getter for the output of a Convex_Hulls.
+ * @return ContoursReport output from Convex_Hulls.
+ */
+std::vector<std::vector<cv::Point> >* GripPipeline::GetConvexHullsOutput(){
+	return &(this->convexHullsOutput);
 }
 	/**
 	 * Segment an image based on hue, saturation, and luminance ranges.
@@ -123,6 +134,21 @@ std::vector<std::vector<cv::Point> >* GripPipeline::GetFilterContoursOutput(){
 			if (ratio < minRatio || ratio > maxRatio) continue;
 			output.push_back(contour);
 		}
+	}
+
+	/**
+	 * Compute the convex hulls of contours.
+	 *
+	 * @param inputContours The contours on which to perform the operation.
+	 * @param outputContours The contours where the output will be stored.
+	 */
+	void GripPipeline::convexHulls(std::vector<std::vector<cv::Point> > &inputContours, std::vector<std::vector<cv::Point> > &outputContours) {
+		std::vector<std::vector<cv::Point> > hull (inputContours.size());
+		outputContours.clear();
+		for (size_t i = 0; i < inputContours.size(); i++ ) {
+			cv::convexHull(cv::Mat((inputContours)[i]), hull[i], false);
+		}
+		outputContours = hull;
 	}
 
 

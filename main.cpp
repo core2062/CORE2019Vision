@@ -17,7 +17,7 @@
 #include <wpi/json.h>
 #include <wpi/raw_istream.h>
 #include <wpi/raw_ostream.h>
-#include <GripPipeline.h>
+#include "GripPipeline.h"
 
 #include "cameraserver/CameraServer.h"
 
@@ -292,12 +292,12 @@ int main(int argc, char* argv[]) {
   // start image processing on camera 0 if present
   if (cameras.size() >= 1) {
     std::thread([&] {
-      frc::VisionRunner<GripPipeline> runner(cameras[0], new GripPipeline(),
-                                           [&](GripPipeline &pipeline) {
+      frc::VisionRunner<grip::GripPipeline> runner(cameras[0], new grip::GripPipeline(),
+                                           [&](grip::GripPipeline &pipeline) {
         // do something with pipeline results
       });
       /* something like this for GRIP:
-      frc::VisionRunner<GripPipeline> runner(cameras[0], new grip::GripPipeline(),
+      frc::VisionRunner<grip::GripPipeline> runner(cameras[0], new grip::GripPipeline(),
                                            [&](grip::GripPipeline& pipeline) {
         ...
       });

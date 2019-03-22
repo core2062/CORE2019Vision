@@ -291,17 +291,23 @@ int main(int argc, char* argv[]) {
 
   // start image processing on camera 0 if present
   if (cameras.size() >= 1) {
+  auto table = ntinst.GetTable("Data Table");
+  auto entryPoint = ntinst.GetEntry("entryPoint");
+  auto entryPoint2 = ntinst.GetEntry("entryPoint2");
     std::thread([&] {
       frc::VisionRunner<grip::GripPipeline> runner(cameras[0], new grip::GripPipeline(),
-                                           [&](grip::GripPipeline &pipeline) {
-        // do something with pipeline results
-      });
-      /* something like this for GRIP:
-      frc::VisionRunner<grip::GripPipeline> runner(cameras[0], new grip::GripPipeline(),
                                            [&](grip::GripPipeline& pipeline) {
-        ...
+        std::vector<std::vector<cv::Point>>* data = pipeline.GetConvexHullsOutput();
+        //Networktables publishing
+        std::string s = "";
+          for(int i = 0; i < (*data)[0].size(); i++) {
+            s += "(" + std::to_string((*data)[0][i].x) + ", ";
+            s += std::to_string((*data)[0][i].y) + ") ";
+          }
+          entryPoint.SetString(s);
+          entryPoint2.SetString(std::to_string((*data).size()));
+
       });
-       */
       runner.RunForever();
     }).detach();
   }

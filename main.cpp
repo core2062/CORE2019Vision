@@ -300,13 +300,15 @@ int main(int argc, char* argv[]) {
         std::vector<std::vector<cv::Point>>* data = pipeline.GetConvexHullsOutput();
         //Networktables publishing
         std::string s = "";
-          for(int i = 0; i < (*data)[0].size(); i++) {
-            s += "(" + std::to_string((*data)[0][i].x) + ", ";
-            s += std::to_string((*data)[0][i].y) + ") ";
+        for (int j = 0; j < data->size(); j++) {
+          s += "[";
+          for(int i = 0; i < (*data)[j].size(); i++) {
+            s += "(" + std::to_string((*data)[j][i].x) + ", " + std::to_string((*data)[j][i].y) + "), ";
           }
-          entryPoint.SetString(s);
-          entryPoint2.SetString(std::to_string((*data).size()));
-
+          s += "],";
+        }
+        entryPoint.SetString(s);
+        entryPoint2.SetString(std::to_string((*data).size()));
       });
       runner.RunForever();
     }).detach();

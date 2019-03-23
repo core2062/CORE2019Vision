@@ -87,48 +87,101 @@
         <value>true</value>
       </grip:Input>
       <grip:Input step="4" socket="3">
-        <value>true</value>
+        <value>false</value>
       </grip:Input>
       <grip:Input step="4" socket="4">
-        <value>true</value>
+        <value>false</value>
       </grip:Input>
       <grip:Input step="4" socket="5">
-        <value>true</value>
+        <value>false</value>
       </grip:Input>
       <grip:Input step="4" socket="6">
-        <value>true</value>
+        <value>false</value>
       </grip:Input>
       <grip:Input step="4" socket="7">
-        <value>true</value>
+        <value>false</value>
+      </grip:Input>
+    </grip:Step>
+    <grip:Step name="Find Lines">
+      <grip:Input step="5" socket="0"/>
+      <grip:Output step="5" socket="0" previewed="false"/>
+    </grip:Step>
+    <grip:Step name="Filter Lines">
+      <grip:Input step="6" socket="0"/>
+      <grip:Input step="6" socket="1">
+        <value>40.0</value>
+      </grip:Input>
+      <grip:Input step="6" socket="2">
+        <value>
+          <int>0</int>
+          <double>360.0</double>
+        </value>
+      </grip:Input>
+      <grip:Output step="6" socket="0" previewed="true"/>
+    </grip:Step>
+    <grip:Step name="NTPublish LinesReport">
+      <grip:Input step="7" socket="0"/>
+      <grip:Input step="7" socket="1">
+        <value>myLinesReport</value>
+      </grip:Input>
+      <grip:Input step="7" socket="2">
+        <value>false</value>
+      </grip:Input>
+      <grip:Input step="7" socket="3">
+        <value>false</value>
+      </grip:Input>
+      <grip:Input step="7" socket="4">
+        <value>false</value>
+      </grip:Input>
+      <grip:Input step="7" socket="5">
+        <value>false</value>
+      </grip:Input>
+      <grip:Input step="7" socket="6">
+        <value>false</value>
+      </grip:Input>
+      <grip:Input step="7" socket="7">
+        <value>false</value>
       </grip:Input>
     </grip:Step>
   </steps>
   <connections>
     <grip:Connection>
-      <grip:Output source="0" socket="0" previewed="true"/>
-      <grip:Input step="0" socket="0"/>
+      <grip:Output step="5" socket="0" previewed="false"/>
+      <grip:Input step="6" socket="0"/>
     </grip:Connection>
     <grip:Connection>
-      <grip:Output step="0" socket="0" previewed="false"/>
-      <grip:Input step="1" socket="0"/>
+      <grip:Output step="6" socket="0" previewed="true"/>
+      <grip:Input step="7" socket="0"/>
     </grip:Connection>
     <grip:Connection>
       <grip:Output step="1" socket="0" previewed="false"/>
       <grip:Input step="2" socket="0"/>
     </grip:Connection>
     <grip:Connection>
-      <grip:Output step="2" socket="0" previewed="false"/>
-      <grip:Input step="3" socket="0"/>
+      <grip:Output source="0" socket="0" previewed="true"/>
+      <grip:Input step="5" socket="0"/>
     </grip:Connection>
     <grip:Connection>
       <grip:Output step="3" socket="0" previewed="false"/>
       <grip:Input step="4" socket="0"/>
     </grip:Connection>
+    <grip:Connection>
+      <grip:Output source="0" socket="0" previewed="true"/>
+      <grip:Input step="0" socket="0"/>
+    </grip:Connection>
+    <grip:Connection>
+      <grip:Output step="2" socket="0" previewed="false"/>
+      <grip:Input step="3" socket="0"/>
+    </grip:Connection>
+    <grip:Connection>
+      <grip:Output step="0" socket="0" previewed="false"/>
+      <grip:Input step="1" socket="0"/>
+    </grip:Connection>
   </connections>
   <settings>
-    <teamNumber>0</teamNumber>
-    <publishAddress>roboRIO-0-FRC.local</publishAddress>
-    <deployAddress>roboRIO-0-FRC.local</deployAddress>
+    <teamNumber>2062</teamNumber>
+    <publishAddress>roboRIO-2062-FRC.local</publishAddress>
+    <deployAddress>roboRIO-2062-FRC.local</deployAddress>
     <deployDir>/home/lvuser</deployDir>
     <deployUser>lvuser</deployUser>
     <deployJavaHome>/usr/local/frc/JRE/</deployJavaHome>

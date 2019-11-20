@@ -182,7 +182,7 @@ std::vector<Line>* GripPipeline::GetFilterLinesOutput(){
 	 * @param lineList The output where the lines are stored.
 	 */
 	void GripPipeline::findLines(cv::Mat &input, std::vector<Line> &lineList) {
-		cv::Ptr<cv::LineSegmentDetector> lsd = cv::createLineSegmentDetector(cv::LineSegmentDetectorModes::LSD_REFINE_STD);
+		cv::Ptr<cv::LineSegmentDetector> lsd = cv::createLineSegmentDetector(cv::LSD_REFINE_STD);
 		std::vector<cv::Vec4i> lines;
 		lineList.clear();
 		if (input.channels() == 1) {
@@ -211,15 +211,18 @@ std::vector<Line>* GripPipeline::GetFilterLinesOutput(){
 	 * @param outputs The output lines after the filter.
 	 */
 	void GripPipeline::filterLines(std::vector<Line> &inputs, double minLength, double angle[], std::vector<Line> &outputs) {
-		outputs.clear();
-		for (Line line: inputs) {
-			if (line.length()>abs(minLength)) {
-				if ((line.angle() >= angle[0] && line.angle() <= angle[1]) ||
-						(line.angle() + 180.0 >= angle[0] && line.angle() + 180.0 <=angle[1])) {
-					outputs.push_back(line);
-				}
+	outputs.clear();
+	for (Line line: inputs) {
+		if (line.length()>abs(minLength)) {
+			if ((line.angle() >= angle[0] && line.angle() <= angle[1]) ||
+					(line.angle() + 180.0 >= angle[0] && line.angle() + 180.0 <=angle[1])) {
+				outputs.push_back(line);
 			}
 		}
 	}
+	}
+
+
+
 } // end grip namespace
 

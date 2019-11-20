@@ -291,29 +291,42 @@ int main(int argc, char* argv[]) {
 
   // start image processing on camera 0 if present
   if (cameras.size() >= 1) {
-  auto table = ntinst.GetTable("Data Table");
-  auto entryPoint = ntinst.GetEntry("entryPoint");
-  auto entryPoint2 = ntinst.GetEntry("entryPoint2");
-    std::thread([&] {
-      frc::VisionRunner<grip::GripPipeline> runner(cameras[0], new grip::GripPipeline(),
-                                           [&](grip::GripPipeline& pipeline) {
-        std::vector<std::vector<cv::Point>>* data = pipeline.GetConvexHullsOutput();
+    // Makes the table    
+    auto table = ntinst.GetTable("Data Table");
+    // Adds instances into the NetworkTables
+    auto entryPoint = ntinst.GetEntry("Array Of Entry Points");
+    auto numberOfEntries = ntinst.GetEntry("Number Of Entries");
+    auto entryArea = ntinst.GetEntry("Entry Area");
+      std::thread([&] {
+        frc::VisionRunner<grip::GripPipeline> runner(cameras[0], new grip::GripPipeline(),
+                                            [&](grip::GripPipeline& pipeline) {
+          std::vector<std::vector<cv::Point>>* data = pipeline.GetConvexHullsOutput();
+        
         //Networktables publishing
-        std::string s = "";
-        for (int j = 0; j < data->size(); j++) {
-          s += "[";
-          for(int i = 0; i < (*data)[j].size(); i++) {
-            s += "(" + std::to_string((*data)[j][i].x) + ", " + std::to_string((*data)[j][i].y) + "), ";
+          std::string s = "";
+          std::string a = "[";
+          // Loops through the vectors which represent contours
+          for (int j = 0; j < data->size(); j++) {
+            s += "[";
+            // Loops through each point in each vector
+            for(int i = 0; i < (*data)[j].size(); i++) {
+              // Adds the (x,y) value of each point to the s String
+              s += "(" + std::to_string((*data)[j][i].x) + ", " + std::to_string((*data)[j][i].y) + "), ";
+            }
+            // Adds the contour area to the a String
+            a += std::to_string(cv::contourArea((*data)[j])) + " ,";
+            s += "],";
           }
-          s += "],";
-        }
-        entryPoint.SetString(s);
-        entryPoint2.SetString(std::to_string((*data).size()));
-      });
-      runner.RunForever();
-    }).detach();
+          a += "]";
+          // Adds a and s Strings to the NetworkTables
+          entryPoint.SetString(s);
+          numberOfEntries.SetString(std::to_string((*data).size()));
+          entryArea.SetString(a);
+        });
+        runner.RunForever();
+      }).detach();
   }
-
+  
   // loop forever
   for (;;) std::this_thread::sleep_for(std::chrono::seconds(10));
 }

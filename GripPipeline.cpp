@@ -34,7 +34,7 @@ void GripPipeline::Process(cv::Mat& source0){
 	double filterContoursMinVertices = 0.0;  // default Double
 	double filterContoursMinRatio = 0.0;  // default Double
 	double filterContoursMaxRatio = 1000.0;  // default Double
-	filterContours(filterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, filterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, this->filterContoursOutput);
+	filterContours(filterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, filterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, this->filterContoursOutput, this->convexHullsCenterX);
 	//Step Convex_Hulls0:
 	//input
 	std::vector<std::vector<cv::Point> > convexHullsContours = filterContoursOutput;
@@ -69,6 +69,14 @@ std::vector<std::vector<cv::Point> >* GripPipeline::GetFilterContoursOutput(){
 std::vector<std::vector<cv::Point> >* GripPipeline::GetConvexHullsOutput(){
 	return &(this->convexHullsOutput);
 }
+
+std::vector<double>* GripPipeline::GetConvexHullsCenterX() {
+	return &(this->convexHullsCenterX);
+}
+// TODO
+// std::vector<double>* GetConvexHullsCenterY();
+// std::vector<double>* GetConvexHullsArea();
+
 	/**
 	 * Segment an image based on hue, saturation, and luminance ranges.
 	 *
@@ -116,8 +124,14 @@ std::vector<std::vector<cv::Point> >* GripPipeline::GetConvexHullsOutput(){
 	 * @param maxRatio maximum ratio of width to height.
 	 * @param output vector of filtered contours.
 	 */
-	void GripPipeline::filterContours(std::vector<std::vector<cv::Point> > &inputContours, double minArea, double minPerimeter, double minWidth, double maxWidth, double minHeight, double maxHeight, double solidity[], double maxVertexCount, double minVertexCount, double minRatio, double maxRatio, std::vector<std::vector<cv::Point> > &output) {
+	void GripPipeline::filterContours(std::vector<std::vector<cv::Point> > &inputContours,
+	double minArea, double minPerimeter, double minWidth, double maxWidth, double minHeight, double maxHeight, double solidity[], double maxVertexCount, double minVertexCount, double minRatio, double maxRatio,
+	std::vector<std::vector<cv::Point> > &output,
+	std::vector<double> &centerXOutput
+	/*, std::vector<double> &centerYOutput, std::vector<double> &areaOutput*/
+	) {
 		std::vector<cv::Point> hull;
+		centerXOutput.clear();
 		output.clear();
 		for (std::vector<cv::Point> contour: inputContours) {
 			cv::Rect bb = boundingRect(contour);
@@ -132,6 +146,7 @@ std::vector<std::vector<cv::Point> >* GripPipeline::GetConvexHullsOutput(){
 			if (contour.size() < minVertexCount || contour.size() > maxVertexCount)	continue;
 			double ratio = (double) bb.width / (double) bb.height;
 			if (ratio < minRatio || ratio > maxRatio) continue;
+			centerXOutput.push_back(bb.x + bb.width / 2);
 			output.push_back(contour);
 		}
 	}

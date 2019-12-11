@@ -27,9 +27,12 @@ class GripPipeline : public frc::VisionPipeline {
 		std::vector<std::vector<cv::Point> > findContoursOutput;
 		std::vector<std::vector<cv::Point> > filterContoursOutput;
 		std::vector<std::vector<cv::Point> > convexHullsOutput;
+		std::vector<double> convexHullsCenterX;
+		std::vector<double> convexHullsCenterY;
+		std::vector<double> convexHullsArea;
 		void hslThreshold(cv::Mat &, double [], double [], double [], cv::Mat &);
 		void findContours(cv::Mat &, bool , std::vector<std::vector<cv::Point> > &);
-		void filterContours(std::vector<std::vector<cv::Point> > &, double , double , double , double , double , double , double [], double , double , double , double , std::vector<std::vector<cv::Point> > &);
+		void filterContours(std::vector<std::vector<cv::Point> > &, double , double , double , double , double , double , double [], double , double , double , double , std::vector<std::vector<cv::Point> > &, std::vector<double> &);
 		void convexHulls(std::vector<std::vector<cv::Point> > &, std::vector<std::vector<cv::Point> > &);
 
 	public:
@@ -39,6 +42,9 @@ class GripPipeline : public frc::VisionPipeline {
 		std::vector<std::vector<cv::Point> >* GetFindContoursOutput();
 		std::vector<std::vector<cv::Point> >* GetFilterContoursOutput();
 		std::vector<std::vector<cv::Point> >* GetConvexHullsOutput();
+		std::vector<double>* GetConvexHullsCenterX();
+		std::vector<double>* GetConvexHullsCenterY();
+		std::vector<double>* GetConvexHullsArea();
 };
 
 

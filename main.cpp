@@ -292,36 +292,40 @@ int main(int argc, char* argv[]) {
   // start image processing on camera 0 if present
   if (cameras.size() >= 1) {
     // Makes the table    
-    auto table = ntinst.GetTable("Data Table");
-    // Adds instances into the NetworkTables
-    auto entryPoint = ntinst.GetEntry("Array Of Entry Points");
-    auto numberOfEntries = ntinst.GetEntry("Number Of Entries");
-    auto entryArea = ntinst.GetEntry("Entry Area");
+    // // Adds instances into the NetworkTables
+    // auto entryPoint = table.getEntry("Array Of Entry Points");
+    // auto numberOfEntries = table.getEntry("Number Of Entries");
+    // auto entryArea = table.getEntry("Entry Area");
       std::thread([&] {
-        frc::VisionRunner<grip::GripPipeline> runner(cameras[0], new grip::GripPipeline(),
-                                            [&](grip::GripPipeline& pipeline) {
+        frc::VisionRunner<grip::GripPipeline> runner(cameras[0], new grip::GripPipeline(), [&](grip::GripPipeline& pipeline) {
           std::vector<std::vector<cv::Point>>* data = pipeline.GetConvexHullsOutput();
-        
-        //Networktables publishing
-          std::string s = "";
-          std::string a = "[";
+          std::vector<double>* centerX = pipeline.GetConvexHullsCenterX();
+          auto table = ntinst.GetTable("COREVision");
+         table->PutNumberArray("Center X", *centerX);
+          // for (std::vector<cv::Point> contour : data) {
+          //   cv::Rect bb = boundingRect(contour);
+          // }
+          //Networktables publishing
+          // std::string s = "";
           // Loops through the vectors which represent contours
-          for (int j = 0; j < data->size(); j++) {
-            s += "[";
+          // std::string a = "[";
+          // for (int j = 0; j < data->size(); j++) {
+            // s += "[";
+            // a += std::to_string((*data)[j].size()) + " ,";
             // Loops through each point in each vector
-            for(int i = 0; i < (*data)[j].size(); i++) {
-              // Adds the (x,y) value of each point to the s String
-              s += "(" + std::to_string((*data)[j][i].x) + ", " + std::to_string((*data)[j][i].y) + "), ";
-            }
+            // for(int i = 0; i < (*data)[j].size(); i++) {
+            //   // Adds the (x,y) value of each point to the s String
+              // s += "(" + std::to_string((*data)[j][i].x) + ", " + std::to_string((*data)[j][i].y) + "), ";
+            // }
             // Adds the contour area to the a String
-            a += std::to_string(cv::contourArea((*data)[j])) + " ,";
-            s += "],";
-          }
-          a += "]";
+            // a += std::to_string(cv::contourArea((*data)[j])) + " ,";
+            // s += "],";
+          // }
+          // a += "]";
           // Adds a and s Strings to the NetworkTables
-          entryPoint.SetString(s);
-          numberOfEntries.SetString(std::to_string((*data).size()));
-          entryArea.SetString(a);
+          // entryPoint.SetString(s);
+          // numberOfEntries.SetString(std::to_string((*data).size()));
+          // entryArea.SetString(a);
         });
         runner.RunForever();
       }).detach();
@@ -330,3 +334,8 @@ int main(int argc, char* argv[]) {
   // loop forever
   for (;;) std::this_thread::sleep_for(std::chrono::seconds(10));
 }
+/*
+1.s created with value ""
+2. "[" gets added
+after that "(" as well as the data (data recieved from :to_string((*data)[j][i].x)) 
+*/

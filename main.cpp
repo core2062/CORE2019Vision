@@ -291,41 +291,27 @@ int main(int argc, char* argv[]) {
 
   // start image processing on camera 0 if present
   if (cameras.size() >= 1) {
-    // Makes the table    
-    // // Adds instances into the NetworkTables
-    // auto entryPoint = table.getEntry("Array Of Entry Points");
-    // auto numberOfEntries = table.getEntry("Number Of Entries");
-    // auto entryArea = table.getEntry("Entry Area");
+
       std::thread([&] {
         frc::VisionRunner<grip::GripPipeline> runner(cameras[0], new grip::GripPipeline(), [&](grip::GripPipeline& pipeline) {
           std::vector<std::vector<cv::Point>>* data = pipeline.GetConvexHullsOutput();
           std::vector<double>* centerX = pipeline.GetConvexHullsCenterX();
+          // Get all areas
+
+          int largestAreaIndex = -1;
+          if (centerX->size() > 0) {
+          // Find the index of the largest area
+
+          }
+          bool hasCenterX = largestAreaIndex >= 0;
           auto table = ntinst.GetTable("COREVision");
-         table->PutNumberArray("Center X", *centerX);
-          // for (std::vector<cv::Point> contour : data) {
-          //   cv::Rect bb = boundingRect(contour);
-          // }
-          //Networktables publishing
-          // std::string s = "";
-          // Loops through the vectors which represent contours
-          // std::string a = "[";
-          // for (int j = 0; j < data->size(); j++) {
-            // s += "[";
-            // a += std::to_string((*data)[j].size()) + " ,";
-            // Loops through each point in each vector
-            // for(int i = 0; i < (*data)[j].size(); i++) {
-            //   // Adds the (x,y) value of each point to the s String
-              // s += "(" + std::to_string((*data)[j][i].x) + ", " + std::to_string((*data)[j][i].y) + "), ";
-            // }
-            // Adds the contour area to the a String
-            // a += std::to_string(cv::contourArea((*data)[j])) + " ,";
-            // s += "],";
-          // }
-          // a += "]";
-          // Adds a and s Strings to the NetworkTables
-          // entryPoint.SetString(s);
-          // numberOfEntries.SetString(std::to_string((*data).size()));
-          // entryArea.SetString(a);
+          table->PutBoolean("Has Center X", hasCenterX);
+          if (hasCenterX) {
+            table->PutNumber("First Center X", (*centerX)[0]);
+          } else {
+            table->PutNumber("First Center X", 0);
+          }
+
         });
         runner.RunForever();
       }).detach();
@@ -335,7 +321,10 @@ int main(int argc, char* argv[]) {
   for (;;) std::this_thread::sleep_for(std::chrono::seconds(10));
 }
 /*
-1.s created with value ""
-2. "[" gets added
-after that "(" as well as the data (data recieved from :to_string((*data)[j][i].x)) 
+1. Find shapes
+2. Find center x
+3. Find area
+4. Find shape with largest area
+5. Find center x of largest shape
+6. Put center x on network table
 */

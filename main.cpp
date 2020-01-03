@@ -297,19 +297,25 @@ int main(int argc, char* argv[]) {
           std::vector<std::vector<cv::Point>>* data = pipeline.GetConvexHullsOutput();
           std::vector<double>* centerX = pipeline.GetConvexHullsCenterX();
           // Get all areas
-
-          int largestAreaIndex = -1;
-          if (centerX->size() > 0) {
-          // Find the index of the largest area
-
+          int maxAreaIndex = -1;
+          double maxArea = 0;
+          int currentIndex = 0;
+          for (std::vector<cv::Point> contour: (*data)) {
+            double area = cv::contourArea(contour);
+            if (area > maxArea){
+              maxArea = area;
+              maxAreaIndex = currentIndex;
+            }
+            currentIndex++;
           }
-          bool hasCenterX = largestAreaIndex >= 0;
+
+          bool hasCenterX = maxAreaIndex >= 0;
           auto table = ntinst.GetTable("COREVision");
           table->PutBoolean("Has Center X", hasCenterX);
           if (hasCenterX) {
-            table->PutNumber("First Center X", (*centerX)[0]);
+            table->PutNumber("Center X", (*centerX)[maxAreaIndex]);
           } else {
-            table->PutNumber("First Center X", 0);
+            table->PutNumber("Center X", 0);
           }
 
         });

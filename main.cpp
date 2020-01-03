@@ -69,6 +69,7 @@ static const char* configFile = "/boot/frc.json";
 namespace {
 
 unsigned int team;
+int cameraWidth;
 bool server = false;
 
 struct CameraConfig {
@@ -101,7 +102,7 @@ bool ReadCameraConfig(const wpi::json& config) {
     ParseError() << "could not read camera name: " << e.what() << '\n';
     return false;
   }
-
+  cameraWidth = config.at("width").get<int>();
   // path
   try {
     c.path = config.at("path").get<std::string>();
@@ -317,7 +318,7 @@ int main(int argc, char* argv[]) {
           } else {
             table->PutNumber("Center X", 0);
           }
-
+          table->PutNumber("Camera Width", cameraWidth);
         });
         runner.RunForever();
       }).detach();
